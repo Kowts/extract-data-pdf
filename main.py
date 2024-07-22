@@ -36,16 +36,16 @@ def extract_concelho_and_posto(page_text):
     Returns:
     tuple: A tuple containing the extracted 'Concelho' and 'Posto' values.
     """
-    concelho_pattern = r'Concelho:\s*([A-Z\s]+)(?=\sPosto)'
-    posto_pattern = r'Posto\s*:\s*([A-Za-z\s-]+)(?=\s)'
+    concelho_pattern = r'Concelho\s*:\s*([\w\sçÇáéíóúàèìòùãõâêîôûäëïöüÄËÏÖÜñÑ]+)\s*Posto\s*:\s*([\w\sçÇáéíóúàèìòùãõâêîôûäëïöüÄËÏÖÜñÑ-]+)'
+    match = re.search(concelho_pattern, page_text, re.UNICODE)
 
-    concelho_match = re.search(concelho_pattern, page_text)
-    posto_match = re.search(posto_pattern, page_text)
+    if match:
+        concelho = match.group(1).strip()
+        posto = match.group(2).strip().rstrip('N').strip()
 
-    concelho = concelho_match.group(1).strip() if concelho_match else None
-    posto = posto_match.group(1).strip() if posto_match else None
+        return concelho, posto
 
-    return concelho, posto
+    return None, None
 
 def determine_type(file_name):
     """
@@ -85,6 +85,7 @@ def extract_tables_from_pdf(pdf_path):
             if not concelho or not posto:
                 page_text = page.extract_text()
                 concelho, posto = extract_concelho_and_posto(page_text)
+                print(f"Extracted Concelho: {concelho}, Posto: {posto}")
 
             tables = page.extract_tables()
             print(f"Found {len(tables)} tables on page {i + 1}")
