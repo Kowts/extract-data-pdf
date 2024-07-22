@@ -233,14 +233,14 @@ def main():
     }
     table_name = 'cidadaos'
 
-    # Root folder to start the search for PDF files
-    root_folder = r'C:\Users\HP\Desktop\get_data_pdf\CADERNO JUNHO 2024'
+    # Prompt the user for the root folder to start the search for PDF files
+    root_folder = input("Insira a pasta raiz dos PDF: ")
 
     # Find all relevant PDF files
     pdf_files = find_pdf_files(root_folder)
 
     # Option to save data to Excel
-    save_to_excel = True  # Change to False if you do not want to save data to Excel
+    save_to_excel = input("Extrair dados para excel? (sim/não): ").strip().lower() == 'sim'
 
     for pdf_path in pdf_files:
         # Extract data from each PDF
