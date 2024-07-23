@@ -1,8 +1,0 @@
-# Ignore the entire CADERNO JUNHO 2024 directory
-CADERNO JUNHO 2024/
-
-# Ignore all PDF files
-*.pdf
-
-# Ignore all Excel files
-*.xlsx
