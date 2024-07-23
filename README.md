@@ -30,7 +30,7 @@ Este projeto tem como objetivo extrair dados de arquivos PDF, inserir os dados e
    python main.py
    ```
 4. **Logs:**
-   Os logs do projeto são salvos no diretório `logs`.
+   Os logs do projeto são guardados no diretório `logs`.
 
 ## Funcionamento
 
@@ -50,6 +50,7 @@ O projeto lê todos os ficheiroa PDF do diretório disponibilizado pelo utilizad
 - `pandas`: Biblioteca para manipulação de dados.
 - `mysql-connector-python`: Biblioteca para conexão com o MySQL.
 - `python-dotenv`: Biblioteca para carregar variáveis de ambiente a partir de um ficheiro `.env`.
+- `tqdm`: Biblioteca para mostrar barras de progresso.
 
 ## Autor
 
