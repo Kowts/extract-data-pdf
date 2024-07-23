@@ -18,7 +18,7 @@ if not os.path.exists('logs'):
 
 logging.basicConfig(
     filename=log_filename,
-    level=logging.DEBUG,
+    level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 
@@ -248,8 +248,10 @@ def insert_data_into_mysql(data, db_config, table_name):
         )
         cursor = conn.cursor()
 
+        # Create the database and table if they don't exist
         create_database_and_table(cursor, db_config['database'], table_name)
 
+        # Query to insert data into the table
         insert_query = f"""
         INSERT INTO {table_name} (
             nome_completo, parent_1, parent_2, data_nascimento, concelho, posto, type, file_name
@@ -268,9 +270,9 @@ def insert_data_into_mysql(data, db_config, table_name):
                 row["File Name"]
             ))
 
-        conn.commit()
-        cursor.close()
-        conn.close()
+        conn.commit() # Commit the changes
+        cursor.close() # Close the cursor
+        conn.close() # Close the connection
     except Exception as e:
         logging.error(f"Error in insert_data_into_mysql: {e}")
 
@@ -287,6 +289,7 @@ def find_pdf_files(root_folder):
     pdf_files = []
     ignore_keywords = ['Provisório', 'Eliminados', 'Elimnado', 'Eliminado', 'Termo']
 
+    # Walk through the root folder and its subfolders to find PDF files
     try:
         for dirpath, _, filenames in os.walk(root_folder):
             for filename in filenames:
