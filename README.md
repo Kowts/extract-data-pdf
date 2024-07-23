@@ -1,4 +1,4 @@
-# xtração de Dados de PDFs
+# Extração de Dados de PDFs
 
 Este projeto tem como objetivo extrair dados de arquivos PDF, inserir os dados extraídos em uma tabela MySQL e opcionalmente salvar os dados em arquivos Excel.
 
@@ -6,6 +6,7 @@ Este projeto tem como objetivo extrair dados de arquivos PDF, inserir os dados e
 
 - Python 3.x
 - MySQL
+- Excel (opcional)
 
 ## Configuração
 
