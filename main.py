@@ -232,7 +232,7 @@ def main():
         'password': os.getenv('DB_PASSWORD'),
         'database': os.getenv('DB_NAME')
     }
-    table_name = 'cidadaos'
+    table_name = os.getenv('DB_TABLE')
 
     # Prompt the user for the root folder to start the search for PDF files
     root_folder = input("Insira a pasta raiz dos PDF: ")
