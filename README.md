@@ -24,16 +24,12 @@ Este projeto tem como objetivo extrair dados de arquivos PDF, inserir os dados e
    DB_NAME=pdf_extraction
    DB_TABLE=cidadaos
    ```
-3. **Criar base de dados:**
-   Execute o script `database.sql` para criar a base de dados e a tabela necessária.
-4. **Configurar diretórios:**
-   Crie os diretórios `pdfs`, `excel` e `logs` na raiz do projeto.
-5. **Executar o projeto:**
+3. **Executar o projeto:**
    Execute o comando abaixo para iniciar o projeto:
    ```bash
    python main.py
    ```
-6. **Logs:**
+4. **Logs:**
    Os logs do projeto são salvos no diretório `logs`.
 
 ## Funcionamento
