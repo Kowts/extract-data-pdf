@@ -1,4 +1,4 @@
-# # Extração de Dados de PDFs
+# xtração de Dados de PDFs
 
 Este projeto tem como objetivo extrair dados de arquivos PDF, inserir os dados extraídos em uma tabela MySQL e opcionalmente salvar os dados em arquivos Excel.
 
@@ -21,6 +21,7 @@ Este projeto tem como objetivo extrair dados de arquivos PDF, inserir os dados e
    DB_USER=root
    DB_PASSWORD=123456
    DB_NAME=pdf_extraction
+   DB_TABLE=cidadaos
    ```
 3. **Criar base de dados:**
    Execute o script `database.sql` para criar a base de dados e a tabela necessária.
@@ -36,14 +37,15 @@ Este projeto tem como objetivo extrair dados de arquivos PDF, inserir os dados e
 
 ## Funcionamento
 
-O projeto lê todos os ficheiroa PDF do diretório `xyz`, extrai os dados e insere na tabela `abd` do MySQL. Opcionalmente, os dados extraídos podem ser guardados em ficheiros Excel no mesmo diretório do ficheiro pdf lido.
+O projeto lê todos os ficheiroa PDF do diretório disponibilizado pelo utilizador, extrai os dados e insere na tabela `DB_TABLE` do MySQL. Opcionalmente, os dados extraídos podem ser guardados em ficheiros excel no mesmo diretório do ficheiro pdf lido.
 
 ## Estrutura do Projeto
 
 - `main.py`: Ficheiro principal do projeto.
 - `requirements.txt`: Ficheiro com as dependências do projeto.
 - `.env`: Ficheiro para guardar as variáveis de ambiente.
-- .`gitignore`: Ficheiro para ignorar elementos do projeto no git.
+- `.gitignore`: Ficheiro para ignorar elementos do projeto no git.
+- `README.pdf`: Ficheiro com a documentação do projeto.
 
 ## Dependências
 
