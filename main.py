@@ -4,6 +4,7 @@ import logging
 import pdfplumber
 import pandas as pd
 import mysql.connector
+from mysql.connector import Error
 from tqdm import tqdm
 from dotenv import load_dotenv
 from datetime import datetime
@@ -11,14 +12,19 @@ from datetime import datetime
 # Load environment variables from a .env file
 load_dotenv()
 
+# Read ignore keywords and types from .env
+ignore_keywords = os.getenv('IGNORE_KEYWORDS', '').split(',')
+types = os.getenv('TYPES', '').split(',')
+
 # Set up logging with a unique file name based on timestamp
 log_filename = f'logs/project_{datetime.now().strftime("%Y%m%d_%H%M%S")}.log'
 if not os.path.exists('logs'):
     os.makedirs('logs')
 
+# Set up logging to file
 logging.basicConfig(
     filename=log_filename,
-    level=logging.INFO,
+    level=logging.DEBUG,
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 
@@ -78,13 +84,13 @@ def determine_type(file_name):
         file_name (str): The name of the file.
 
     Returns:
-        str: The determined type ('nacionais' or 'estrangeiros') or 'unknown'.
+        str: The determined type from the types list or 'unknown'.
     """
     try:
-        if 'naciona' in file_name.lower():
-            return 'nacionais'
-        elif 'estrangeiro' in file_name.lower():
-            return 'estrangeiros'
+        lower_file_name = file_name.lower()
+        for doc_type in types:
+            if doc_type.lower() in lower_file_name:
+                return doc_type
         return 'unknown'
     except Exception as e:
         logging.error(f"Error in determine_type: {e}")
@@ -231,6 +237,31 @@ def create_database_and_table(cursor, db_name, table_name):
     except Exception as e:
         logging.error(f"Error in create_database_and_table: {e}")
 
+def check_mysql_connection(db_config):
+    """
+    Checks if the connection to the MySQL database is successful.
+
+    Args:
+        db_config (dict): The database configuration containing host, user, password, and database name.
+
+    Returns:
+        bool: True if the connection is successful, False otherwise.
+    """
+    try:
+        conn = mysql.connector.connect(
+            host=db_config['host'],
+            user=db_config['user'],
+            password=db_config['password']
+        )
+        cursor = conn.cursor()
+        cursor.execute(f"CREATE DATABASE IF NOT EXISTS {db_config['database']}")
+        cursor.close()
+        conn.close()
+        return True
+    except Error as e:
+        logging.error(f"Error connecting to MySQL: {e}")
+    return False
+
 def insert_data_into_mysql(data, db_config, table_name):
     """
     Inserts extracted data into a MySQL database table.
@@ -244,14 +275,13 @@ def insert_data_into_mysql(data, db_config, table_name):
         conn = mysql.connector.connect(
             host=db_config['host'],
             user=db_config['user'],
-            password=db_config['password']
+            password=db_config['password'],
+            database=db_config['database']
         )
         cursor = conn.cursor()
 
-        # Create the database and table if they don't exist
         create_database_and_table(cursor, db_config['database'], table_name)
 
-        # Query to insert data into the table
         insert_query = f"""
         INSERT INTO {table_name} (
             nome_completo, parent_1, parent_2, data_nascimento, concelho, posto, type, file_name
@@ -270,9 +300,9 @@ def insert_data_into_mysql(data, db_config, table_name):
                 row["File Name"]
             ))
 
-        conn.commit() # Commit the changes
-        cursor.close() # Close the cursor
-        conn.close() # Close the connection
+        conn.commit()
+        cursor.close()
+        conn.close()
     except Exception as e:
         logging.error(f"Error in insert_data_into_mysql: {e}")
 
@@ -287,9 +317,8 @@ def find_pdf_files(root_folder):
         list: A list of paths to PDF files.
     """
     pdf_files = []
-    ignore_keywords = ['Provisório', 'Eliminados', 'Elimnado', 'Eliminado', 'Termo']
+    ignore_keywords = os.getenv('IGNORE_KEYWORDS', '').split(',')
 
-    # Walk through the root folder and its subfolders to find PDF files
     try:
         for dirpath, _, filenames in os.walk(root_folder):
             for filename in filenames:
@@ -312,6 +341,12 @@ def main():
         'database': os.getenv('DB_NAME')
     }
     table_name = os.getenv('DB_TABLE')
+
+    # Check MySQL connection
+    if not check_mysql_connection(db_config):
+        print("❌ Unable to connect to the MySQL database. Please check your configuration.")
+        logging.error("Unable to connect to the MySQL database. Process stopped.")
+        return
 
     # Prompt the user for the root folder to start the search for PDF files
     root_folder = input("Insira a pasta raiz dos PDF: ")
@@ -344,7 +379,7 @@ def main():
             logging.error(f"Error processing {pdf_path}: {e}")
 
     # Indicate completion to the user
-    print("✅ Processing complete, check the logs for more information.")
+    print("✅ Processing complete, please check the logs for more information.")
     logging.info("Processing complete!😀✌️")
 
 if __name__ == "__main__":
